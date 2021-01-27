@@ -25,7 +25,7 @@ spring:
                 postLogger: true
             - name: CircuitBreaker
               args:
-                name: fallbackcmd
+                name: circuitBreaker
                 fallbackUri: forward:/fallback
 #        - id: shop-service
 #          uri: http://localhost:8082
