@@ -1,0 +1,79 @@
+
+steps:
+  ### Build
+  - id: 'build'
+    name: 'gcr.io/cloud-builders/mvn'
+    args: [
+      'clean',
+      'package',
+      '-Dmaven.test.skip=true'
+    ]
+  ### docker Build
+  - id: 'docker build'
+    name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--tag=gcr.io/hidoldori-lab-cicd-project/hidoldori-gateway:$SHORT_SHA'
+      - '.'
+  ### docker Publish
+  - id: 'publish'
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker push gcr.io/hidoldori-lab-cicd-project/hidoldori-gateway:$SHORT_SHA
+  ### deploy to dev
+  - id: 'deploy dev'
+    name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        PROJECT=$$(gcloud config get-value core/project)
+        gcloud container clusters get-credentials "$${CLOUDSDK_CONTAINER_CLUSTER}" \
+          --project "$${PROJECT}" \
+          --zone "$${CLOUDSDK_COMPUTE_ZONE}"
+        cat <<EOF | kubectl apply -f -
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: hidoldori-gateway
+          labels:
+            app: hidoldori-gateway
+        spec:
+          ports:
+            - port: 80
+              targetPort: 80
+          selector:
+            app: hidoldori-gateway
+          type: LoadBalancer
+        EOF
+        cat <<EOF | kubectl apply -f -
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: hidoldori-gateway
+          labels:
+            app: hidoldori-gateway
+        spec:
+          replicas: 2
+          selector:
+            matchLabels:
+              app: hidoldori-gateway
+          template:
+            metadata:
+              labels:
+                app: hidoldori-gateway
+            spec:
+              containers:
+                - name: hidoldori-gateway
+                  image: gcr.io/hidoldori-lab-cicd-project/hidoldori-gateway:$SHORT_SHA
+                  ports:
+                    - containerPort: 80
+        EOF
+options:
+  env:
+    #    # location/name of GKE cluster (used by all kubectl commands)
+    - CLOUDSDK_COMPUTE_ZONE=us-central1-b
+    - CLOUDSDK_CONTAINER_CLUSTER=hidoldori-lab-cluster
