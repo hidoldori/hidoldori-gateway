@@ -18,9 +18,9 @@ spring:
       routes:
         - id: user-service
 #          uri: http://localhost:8080
-          uri: lb://hidoldori-web
+          uri: lb://hidoldori-web:8080
           predicates:
-            - Path=/hidoldori/**
+            - Path=/hidoldori/lab/hidoldori-web/test
           filters:
             - name: UserFilter
               args:
