@@ -23,7 +23,7 @@ spring:
                 baseMessage: Taeu UserFilter
                 preLogger: true
                 postLogger: true
-            - name: Hystrix
+            - name: CircuitBreaker
               args:
                 name: fallbackcmd
                 fallbackUri: forward:/fallback
