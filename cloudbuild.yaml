@@ -76,4 +76,4 @@ options:
   env:
     #    # location/name of GKE cluster (used by all kubectl commands)
     - CLOUDSDK_COMPUTE_ZONE=us-central1-b
-    - CLOUDSDK_CONTAINER_CLUSTER=hidoldori-lab-cluster
+    - CLOUDSDK_CONTAINER_CLUSTER=hidoldori-lab-cicd-cluster
