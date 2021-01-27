@@ -14,7 +14,7 @@ spring:
       routes:
         - id: user-service
 #          uri: http://localhost:8080
-          uri: lb://hidoldori-gateway:8080
+          uri: lb://hidoldori-web:8080
           predicates:
             - Path=/hidoldori/**
           filters:
