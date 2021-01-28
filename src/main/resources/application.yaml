@@ -25,13 +25,14 @@ spring:
 #          args:
 #            name: fallbackcmd
 #            fallbackUri: forward:/fallback
+      # url: lb 사용하기 위해서는 Discovery 절 추가 필요함.
       discovery:
         locator:
           enabled: true
       routes:
         - id: user-service
 #          uri: http://34.69.205.52:8080
-          uri: lb://hidoldori-web
+          uri: lb://hidoldori-web:8080
           predicates:
             - Path=/hidoldori/lab/hidoldori-web/test
           filters:
