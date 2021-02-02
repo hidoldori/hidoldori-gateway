@@ -41,7 +41,6 @@ steps:
           name: hidoldori-gateway
           labels:
             app: hidoldori-gateway
-          namespace: hidoldori
         spec:
           ports:
             - port: 80
@@ -57,7 +56,6 @@ steps:
           name: hidoldori-gateway
           labels:
             app: hidoldori-gateway
-          namespace: hidoldori
         spec:
           replicas: 1
           selector:
